@@ -1,175 +1,142 @@
-<!DOCTYPE html>
-<html lang="zh-CN">
-<head>
-  <meta charset="UTF-8">
-  <!-- 针对手机端适配，禁止缩放 -->
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <!-- 让它在 iPhone 上像原生 App 一样全屏显示 -->
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <title>26成都教招刷题</title>
-  <style>
-    /* 界面样式 */
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-      background-color: #f5f7fa;
-      margin: 0;
-      padding: 20px;
-      color: #333;
-    }
-    .header {
-      text-align: center;
-      font-size: 18px;
-      font-weight: bold;
-      margin-bottom: 20px;
-      color: #409eff;
-    }
-    .card {
-      background: #fff;
-      border-radius: 12px;
-      padding: 20px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-      margin-bottom: 20px;
-    }
-    .question {
-      font-size: 18px;
-      line-height: 1.5;
-      margin-bottom: 20px;
-    }
-    .option {
-      display: block;
-      width: 100%;
-      padding: 15px;
-      margin-bottom: 12px;
-      border: 1px solid #dcdfe6;
-      border-radius: 8px;
-      background: #fff;
-      font-size: 16px;
-      text-align: left;
-      box-sizing: border-box;
-      transition: all 0.2s;
-    }
-    .option:active { background: #f0f2f5; }
-    /* 正确和错误的颜色 */
-    .correct { background-color: #f0f9eb !important; border-color: #67c23a !important; color: #67c23a; }
-    .wrong { background-color: #fef0f0 !important; border-color: #f56c6c !important; color: #f56c6c; }
-    
-    .analysis-box {
-      display: none; /* 默认隐藏，答题后显示 */
-      margin-top: 20px;
-      padding: 15px;
-      background: #ecf5ff;
-      border-radius: 8px;
-      color: #409eff;
-      line-height: 1.5;
-    }
-    .next-btn {
-      display: none; /* 默认隐藏 */
-      width: 100%;
-      padding: 15px;
-      background: #409eff;
-      color: white;
-      border: none;
-      border-radius: 8px;
-      font-size: 18px;
-      margin-top: 20px;
-    }
-  </style>
-</head>
-<body>
-
-  <div class="header">
-    <span id="progress">1 / 3</span> 题
-  </div>
-
-  <div class="card">
-    <div class="question" id="questionText">题目加载中...</div>
-    <div id="optionsContainer">
-      <!-- 选项会通过 JS 生成到这里 -->
-    </div>
-    <div class="analysis-box" id="analysisBox"></div>
-  </div>
-
-  <button class="next-btn" id="nextBtn" onclick="nextQuestion()">下一题</button>
-
-  <!-- 引入第一步写的题库文件 -->
-  <script src="questions.js"></script>
-  
-  <script>
-    let currentIndex = 0; // 当前做到第几题
-
-    const questionText = document.getElementById('questionText');
-    const optionsContainer = document.getElementById('optionsContainer');
-    const analysisBox = document.getElementById('analysisBox');
-    const nextBtn = document.getElementById('nextBtn');
-    const progressText = document.getElementById('progress');
-
-    // 渲染题目
-    function loadQuestion() {
-      const q = questionBank[currentIndex];
-      progressText.innerText = `${currentIndex + 1} / ${questionBank.length}`;
-      questionText.innerText = q.question;
-      
-      // 清空旧选项和解析
-      optionsContainer.innerHTML = '';
-      analysisBox.style.display = 'none';
-      nextBtn.style.display = 'none';
-
-      // 生成新选项
-      q.options.forEach((opt, index) => {
-        const btn = document.createElement('button');
-        btn.className = 'option';
-        btn.innerText = opt;
-        btn.onclick = () => checkAnswer(index, btn);
-        optionsContainer.appendChild(btn);
-      });
-    }
-
-    // 检查答案
-    function checkAnswer(selectedIndex, clickedBtn) {
-      const q = questionBank[currentIndex];
-      const allBtns = optionsContainer.querySelectorAll('.option');
-      
-      // 禁用所有按钮，防止重复点击
-      allBtns.forEach(btn => btn.onclick = null);
-
-      if (selectedIndex === q.answer) {
-        clickedBtn.classList.add('correct');
-      } else {
-        clickedBtn.classList.add('wrong');
-        // 如果选错了，把正确的标绿提示出来
-        allBtns[q.answer].classList.add('correct');
-      }
-
-      // 显示解析和下一题按钮
-      analysisBox.innerText = q.analysis;
-      analysisBox.style.display = 'block';
-      
-      // 如果不是最后一题，显示下一题按钮；否则显示完成
-      if (currentIndex < questionBank.length - 1) {
-        nextBtn.innerText = '下一题';
-        nextBtn.style.display = 'block';
-      } else {
-        nextBtn.innerText = '重新开始';
-        nextBtn.style.display = 'block';
-      }
-    }
-
-    // 点击下一题
-    function nextQuestion() {
-      if (currentIndex < questionBank.length - 1) {
-        currentIndex++;
-        loadQuestion();
-      } else {
-        // 刷完一遍，重新开始
-        currentIndex = 0;
-        loadQuestion();
-        window.scrollTo(0, 0); // 滚回顶部
-      }
-    }
-
-    // 页面加载完毕后立即执行
-    window.onload = loadQuestion;
-  </script>
-</body>
-</html>
+const questionBank = [
+  {
+    id: 1,
+    question: "世界上最早专门论述教育教学问题的著作是（ ）。",
+    options: ["A. 《论语》", "B. 《学记》", "C. 《大教学论》", "D. 《理想国》"],
+    answer: 1,
+    analysis: "《学记》是世界上最早的一部专门论述教育、教学问题的论著，比古罗马昆体良的《论演说家的教育》还早300多年。"
+  },
+  {
+    id: 2,
+    question: "被誉为“现代教育学之父”和“科学教育学的奠基人”的是（ ）。",
+    options: ["A. 夸美纽斯", "B. 赫尔巴特", "C. 卢梭", "D. 杜威"],
+    answer: 1,
+    analysis: "赫尔巴特的《普通教育学》标志着教育学作为一门规范、独立的学科正式诞生，他被称为“现代教育学之父”。夸美纽斯被称为“教育学之父”。"
+  },
+  {
+    id: 3,
+    question: "“揠苗助长”“陵节而施”违背了人的身心发展的（ ）。",
+    options: ["A. 顺序性", "B. 阶段性", "C. 不平衡性", "D. 个别差异性"],
+    answer: 0,
+    analysis: "顺序性要求教育工作要循序渐进。“揠苗助长”“陵节而施”都是急于求成，违背了循序渐进的原则，即违背了顺序性。"
+  },
+  {
+    id: 4,
+    question: "教育的根本任务是（ ）。",
+    options: ["A. 传授基本知识", "B. 发展智力体力", "C. 立德树人", "D. 培养专业人才"],
+    answer: 2, 
+    analysis: "党的十八大报告指出，把立德树人作为教育的根本任务。这是近年教基考试的常考必考点（政策法规类）。"
+  },
+  {
+    id: 5,
+    question: "教师的根本任务是（ ）。",
+    options: ["A. 传授知识", "B. 教书育人", "C. 班级管理", "D. 心理辅导"],
+    answer: 1,
+    analysis: "《中华人民共和国教师法》规定，教师是履行教育教学职责的专业人员，承担教书育人、培养社会主义事业建设者和接班人、提高民族素质的使命。因此，教师的根本任务是教书育人。"
+  },
+  {
+    id: 6,
+    question: "教学工作的中心环节是（ ）。",
+    options: ["A. 备课", "B. 上课", "C. 课外作业的布置与批改", "D. 学业成绩的检查与评定"],
+    answer: 1,
+    analysis: "教学工作包括五个基本环节：备课、上课、课外作业的布置与批改、课外辅导、学业成绩的检查与评定。其中，备课是先决条件，上课是中心环节。"
+  },
+  {
+    id: 7,
+    question: "班主任工作的前提和基础是（ ）。",
+    options: ["A. 了解和研究学生", "B. 组织和培养班集体", "C. 做好个别教育工作", "D. 统一多方面的教育力量"],
+    answer: 0,
+    analysis: "班主任工作的前提和基础是了解和研究学生；班主任工作的中心环节是组织和培养班集体。"
+  },
+  {
+    id: 8,
+    question: "“一两的遗传胜过一吨的教育”，这种观点属于（ ）。",
+    options: ["A. 环境决定论", "B. 遗传决定论", "C. 教育万能论", "D. 二因素论"],
+    answer: 1,
+    analysis: "这是美国心理学家霍尔的名言，他极度夸大了遗传在人的发展中的作用，是典型的遗传决定论代表人物。"
+  },
+  {
+    id: 9,
+    question: "德育原则中，“一把钥匙开一把锁”体现的是（ ）。",
+    options: ["A. 导向性原则", "B. 疏导原则", "C. 因材施教原则", "D. 连贯性原则"],
+    answer: 2,
+    analysis: "“一把钥匙开一把锁”比喻针对不同的情况采取不同的方法，在德育和教学中都体现了因材施教的原则。"
+  },
+  {
+    id: 10,
+    question: "根据艾宾浩斯遗忘曲线，遗忘的进程是（ ）。",
+    options: ["A. 先快后慢", "B. 先慢后快", "C. 匀速发展", "D. 忽快忽慢"],
+    answer: 0,
+    analysis: "德国心理学家艾宾浩斯提出了遗忘曲线，表明遗忘在学习之后立即开始，而且遗忘的进程是不均衡的，其规律是“先快后慢，呈负加速型”。"
+  },
+  {
+    id: 11,
+    question: "学生一边听课，一边记笔记。这属于注意的（ ）。",
+    options: ["A. 广度", "B. 稳定性", "C. 分配", "D. 转移"],
+    answer: 2,
+    analysis: "注意的分配是指在同一时间内，把注意指向于不同的对象或活动。一边听课一边记笔记是典型的注意分配。"
+  },
+  {
+    id: 12,
+    question: "皮亚杰将儿童的认知发展分为四个阶段。其中“守恒概念的形成”属于（ ）。",
+    options: ["A. 感知运动阶段", "B. 前运算阶段", "C. 具体运算阶段", "D. 形式运算阶段"],
+    answer: 2,
+    analysis: "具体运算阶段（7-11岁）的标志是守恒观念的形成。儿童能够认识到客体外形发生变化但其本质属性不变（如把一杯水倒入细长杯子里，水量不变）。"
+  },
+  {
+    id: 13,
+    question: "提出“最近发展区”理论的心理学家是（ ）。",
+    options: ["A. 维果斯基", "B. 赞可夫", "C. 巴甫洛夫", "D. 斯金纳"],
+    answer: 0,
+    analysis: "苏联心理学家维果斯基提出了“最近发展区”理论，认为学生的发展有两种水平：一是现有的发展水平，二是即将达到的发展水平。两者之间的差距就是最近发展区。教学应走在发展的前面。"
+  },
+  {
+    id: 14,
+    question: "马斯洛需要层次理论中，最高层次的需要是（ ）。",
+    options: ["A. 归属与爱的需要", "B. 尊重的需要", "C. 求知的需要", "D. 自我实现的需要"],
+    answer: 3,
+    analysis: "马斯洛把需要分为七个层次，从低到高依次是：生理需要、安全需要、归属与爱的需要、尊重需要、认知需要、审美需要、自我实现的需要。"
+  },
+  {
+    id: 15,
+    question: "“杀鸡儆猴”在班杜拉的社会学习理论中属于（ ）。",
+    options: ["A. 直接强化", "B. 替代性强化", "C. 自我强化", "D. 负强化"],
+    answer: 1,
+    analysis: "替代性强化是指学习者通过观察他人（榜样）受到强化而使自己表现出类似行为的倾向。“杀鸡儆猴”就是看到别人受罚，自己引以为戒。"
+  },
+  {
+    id: 16,
+    question: "老师为了让学生好好写作业，承诺只要连续一周按时交作业，周末就可以不写周记。这属于（ ）。",
+    options: ["A. 正强化", "B. 负强化", "C. 惩罚", "D. 消退"],
+    answer: 1,
+    analysis: "负强化是指撤销一个厌恶刺激（不写周记），从而增加行为发生的频率（按时交作业）。"
+  },
+  {
+    id: 17,
+    question: "为获取好分数或父母的赞许而努力学习的动机属于（ ）。",
+    options: ["A. 内部动机", "B. 外部动机", "C. 高尚动机", "D. 低级动机"],
+    answer: 1,
+    analysis: "外部动机是指诱因来自于学习者外部，如父母的奖励、老师的表扬、为了获取好分数等。内部动机则是对学习内容本身感兴趣。"
+  },
+  {
+    id: 18,
+    question: "一个人把对某人的感情转移到另一个人身上的心理防御机制是（ ）。",
+    options: ["A. 认同", "B. 投射", "C. 移情", "D. 升华"],
+    answer: 2,
+    analysis: "移情是指将过去对生活中重要人物的感情转移到当前的人（如心理咨询师或老师）身上。投射是指把自己的意愿强加给别人（如以小人之心度君子之腹）。"
+  },
+  {
+    id: 19,
+    question: "《中华人民共和国义务教育法》规定，义务教育实行（ ）领导。 ",
+    options: ["A. 国务院", "B. 省级人民政府", "C. 县级人民政府", "D. 乡镇人民政府"],
+    answer: 0,
+    analysis: "《义务教育法》第七条规定：义务教育实行国务院领导，省、自治区、直辖市人民政府统筹规划实施，县级人民政府为主管理的体制。"
+  },
+  {
+    id: 20,
+    question: "教师职业道德修养的最高境界是（ ）。",
+    options: ["A. 慎独", "B. 奉献", "C. 爱岗敬业", "D. 为人师表"],
+    answer: 0,
+    analysis: "“慎独”是指在没有外界监督、独自一人的情况下，也能自觉遵守道德准则。这是教师职业道德修养的最高层次和境界。"
+  }
+];
